@@ -20,7 +20,6 @@ import com.vaadin.ui.themes.ValoTheme;
 public class EmployeeEditor extends VerticalLayout {
 
 		private final EmployeeRepository repository;
-
 		/**
 		 * The currently edited employee
 		 */
@@ -35,9 +34,6 @@ public class EmployeeEditor extends VerticalLayout {
 		Button cancel = new Button("Cancel");
 		Button delete = new Button("Delete", FontAwesome.TRASH_O);
 		CssLayout actions = new CssLayout(save, cancel, delete);
-
-
-
 		
 		@Autowired
 		public EmployeeEditor(EmployeeRepository repository) {
@@ -54,7 +50,7 @@ public class EmployeeEditor extends VerticalLayout {
 			save.addClickListener(e -> repository.save(employee));
 			delete.addClickListener(e -> repository.delete(employee));
 			cancel.addClickListener(e -> editEmployee(employee));
-			setVisible(false);
+			//setVisible(false);
 		}
 
 		public interface ChangeHandler {

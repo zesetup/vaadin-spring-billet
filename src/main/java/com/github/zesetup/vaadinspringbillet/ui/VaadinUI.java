@@ -31,39 +31,29 @@ public class VaadinUI extends UI {
 	final TextField filter;
 	private final Button addNewBtn;
 	private Window editorSubWindow = new Window("Editor window");
-	private VerticalLayout editorSubContent = new VerticalLayout();
 	private static final Logger logger = LoggerFactory.getLogger(VaadinUI.class);
 	
 	@Autowired
 	public VaadinUI(EmployeeRepository repo, EmployeeEditor editor) {
-		/* Editor subwindow */
-        editorSubContent.setMargin(true);       
-        editorSubWindow.setContent(editor);
-        editorSubWindow.setVisible(false);
-        
-        
 	    this.repo = repo;
 	    this.grid = new Grid();
 	    this.editor = editor;
 		this.filter = new TextField();
 		this.addNewBtn = new Button("New employee", FontAwesome.PLUS);
-		
 	}
 
 	@Override
 	protected void init(VaadinRequest request) {
 		// build layout
 		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
-		//VerticalLayout mainLayout = new VerticalLayout(actions, grid, editor);
 		VerticalLayout mainLayout = new VerticalLayout(actions, grid);
 		setContent(mainLayout);
-		addWindow(editorSubWindow);
 		
 		// Configure layouts and components
 		actions.setSpacing(true);
 		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
-
+		
 		grid.setHeight(300, Unit.PIXELS);		
 		grid.setColumns("id", "name", "surname");
 		filter.setInputPrompt("Filter by surname");
@@ -75,13 +65,18 @@ public class VaadinUI extends UI {
 
 		// Connect selected employee to editor or hide if none is selected
 		grid.addSelectionListener(e -> {
+			logger.info("selected!");
 			if (e.getSelected().isEmpty()) {
-				editor.setVisible(false);
 				editorSubWindow.setVisible(false);
-			}
-			else {
-				editor.setVisible(true);
-				editorSubWindow.setVisible(true);
+			} else {
+				logger.info("-> edit");
+				/* Editor subwindow */
+				editorSubWindow.setHeight("400px");
+				editorSubWindow.setWidth("600px");
+				editorSubWindow.setPosition(100, 100);
+		        editorSubWindow.setContent(editor);
+				addWindow(editorSubWindow);
+				editor.editEmployee((Employee) grid.getSelectedRow());
 			}
 		});
 
@@ -90,10 +85,14 @@ public class VaadinUI extends UI {
 
 		// Listen changes made by the editor, refresh data from backend
 		editor.setChangeHandler(() -> {
-			//editor.setVisible(false);
-			editorSubWindow.setVisible(false);
+			//editorSubWindow.setVisible(false);
 			listEmployees(filter.getValue());
 		});
+		
+		/*editorSubWindow.addCloseListener(e ->{
+			editorSubWindow.setVisible(false);
+			logger.info("editorSubWindow closed");
+		});*/
 
 		// Initialize listing
 		listEmployees(null);
