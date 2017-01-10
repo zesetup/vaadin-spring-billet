@@ -23,8 +23,9 @@ public class Application {
 		public CommandLineRunner loadData(final EmployeeRepository repository) {
 			return (args) -> {
 				// save a couple of Employees
-				repository.save(new Employee("John", "Reech", "South", "manager"));
-				repository.save(new Employee("John2", "Reech2", "South2", "manager2"));
+				repository.save(new Employee("ivanov", "Ivan", "Ivanovich", "Engeneer"));
+				repository.save(new Employee("johnson", "John", "Johnson", "Project Manager"));
+				repository.save(new Employee("jonauskas", "Jonas", "Jonauskas", "Officer"));
 				// fetch all Employees
 				log.info("Employees found with findAll():");
 				log.info("-------------------------------");
