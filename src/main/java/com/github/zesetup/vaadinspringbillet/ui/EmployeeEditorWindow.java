@@ -17,40 +17,43 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
 @UIScope
-public class EmployeeEditor extends VerticalLayout {
+public class EmployeeEditorWindow extends Window {
 
-		private final EmployeeRepository repository;
+		//private final EmployeeRepository repository;
 		/**
 		 * The currently edited employee
 		 */
 		private Employee employee;
-
 		/* Fields to edit properties in Employee entity */
 		TextField name = new TextField("First name");
 		TextField surname= new TextField("Last name");
 
 		/* Action buttons */
 		Button save = new Button("Save", FontAwesome.SAVE);
-		Button cancel = new Button("Cancel");
+		Button cancel = new Button("Reset");
 		Button delete = new Button("Delete", FontAwesome.TRASH_O);
 		CssLayout actions = new CssLayout(save, cancel, delete);
 		
 		@Autowired
-		public EmployeeEditor(EmployeeRepository repository) {
-			this.repository = repository;
-			addComponents(name, surname, actions);
-
+		EmployeeRepository repository;
+		
+		@Autowired
+		public EmployeeEditorWindow() {
+			//this.repository = repository;
 			// Configure and style components
-			setSpacing(true);
 			actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 			save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 			save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-
 			// wire action buttons to save, delete and reset
 			save.addClickListener(e -> repository.save(employee));
 			delete.addClickListener(e -> repository.delete(employee));
 			cancel.addClickListener(e -> editEmployee(employee));
-			//setVisible(false);
+			VerticalLayout verticalLayout = new VerticalLayout(name, surname, actions);
+			verticalLayout.setMargin(true);
+			verticalLayout.setSpacing(true);
+			setPosition(100, 100);
+			setCaption("Employee editor");
+			setContent(verticalLayout);
 		}
 
 		public interface ChangeHandler {

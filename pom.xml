@@ -32,11 +32,18 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
+        <!-- Vaadin -->
 		<dependency>
 		    <groupId>com.vaadin</groupId>
 		    <artifactId>vaadin-spring-boot-starter</artifactId>
 		    <version>1.1.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.vaadin/viritin -->
+	<!-- 	<dependency>
+		    <groupId>org.vaadin</groupId>
+		    <artifactId>viritin</artifactId>
+		    <version>1.61</version>
+		</dependency> -->
 	</dependencies>
 	<build>
         <plugins>

@@ -1,5 +1,7 @@
 package com.github.zesetup.vaadinspringbillet;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,14 @@ public class Application {
 				repository.save(new Employee("ivanov", "Ivan", "Ivanovich", "Engeneer"));
 				repository.save(new Employee("johnson", "John", "Johnson", "Project Manager"));
 				repository.save(new Employee("jonauskas", "Jonas", "Jonauskas", "Officer"));
+				for(int i=0;i<150;i++) {
+					repository.save(new Employee(
+							"login"+UUID.randomUUID().toString().substring(0,5), 
+							"name"+UUID.randomUUID().toString().substring(0,5),
+							"surname"+UUID.randomUUID().toString().substring(0,5), 
+							"posit"+UUID.randomUUID().toString().substring(0,5)));
+				}
+				
 				// fetch all Employees
 				log.info("Employees found with findAll():");
 				log.info("-------------------------------");

@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 import com.vaadin.annotations.Theme;
@@ -20,24 +19,21 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-
-
 @SpringUI
 @Theme("valo")
 public class VaadinUI extends UI {
 	private final EmployeeRepository repo;
-	private final EmployeeEditor editor;
+	private final EmployeeEditorWindow editorWindow;
 	final Grid grid;
 	final TextField filter;
 	private final Button addNewBtn;
-	private Window editorSubWindow = new Window("Editor window");
 	private static final Logger logger = LoggerFactory.getLogger(VaadinUI.class);
 	
 	@Autowired
-	public VaadinUI(EmployeeRepository repo, EmployeeEditor editor) {
+	public VaadinUI(EmployeeRepository repo, EmployeeEditorWindow editorWindow) {
 	    this.repo = repo;
 	    this.grid = new Grid();
-	    this.editor = editor;
+	    this.editorWindow = editorWindow;
 		this.filter = new TextField();
 		this.addNewBtn = new Button("New employee", FontAwesome.PLUS);
 	}
@@ -54,7 +50,7 @@ public class VaadinUI extends UI {
 		mainLayout.setMargin(true);
 		mainLayout.setSpacing(true);
 		
-		grid.setHeight(300, Unit.PIXELS);		
+		grid.setHeight(300, Unit.PIXELS);
 		grid.setColumns("id", "name", "surname");
 		filter.setInputPrompt("Filter by surname");
 
@@ -62,30 +58,30 @@ public class VaadinUI extends UI {
 
 		// Replace listing with filtered content when user changes filter
 		filter.addTextChangeListener(e -> listEmployees(e.getText()));
-
+		
 		// Connect selected employee to editor or hide if none is selected
 		grid.addSelectionListener(e -> {
 			logger.info("selected!");
 			if (e.getSelected().isEmpty()) {
-				editorSubWindow.setVisible(false);
+				//editorSubWindow.setVisible(false);
 			} else {
 				logger.info("-> edit");
 				/* Editor subwindow */
-				editorSubWindow.setHeight("400px");
-				editorSubWindow.setWidth("600px");
-				editorSubWindow.setPosition(100, 100);
-		        editorSubWindow.setContent(editor);
-				addWindow(editorSubWindow);
-				editor.editEmployee((Employee) grid.getSelectedRow());
+				editorWindow.editEmployee((Employee) grid.getSelectedRow());
+				addWindow(editorWindow);
+				
 			}
 		});
 
 		// Instantiate and edit new employee the new button is clicked
-		addNewBtn.addClickListener(e -> editor.editEmployee(new Employee("saply", "Itan", "Saply", "Enginner")));
+		addNewBtn.addClickListener(e -> {
+			editorWindow.editEmployee(new Employee("saply", "Itan", "Saply", "Enginner"));
+			addWindow(editorWindow);
+		});
 
 		// Listen changes made by the editor, refresh data from backend
-		editor.setChangeHandler(() -> {
-			//editorSubWindow.setVisible(false);
+		editorWindow.setChangeHandler(() -> {
+			editorWindow.close();
 			listEmployees(filter.getValue());
 		});
 		
@@ -106,7 +102,6 @@ public class VaadinUI extends UI {
 		} else {
 			grid.setContainerDataSource(
 		    		new BeanItemContainer(Employee.class, repo.findBySurnameStartsWithIgnoreCase(text)));
-			
 		}
 	}
 	// end::listEmployees[]
