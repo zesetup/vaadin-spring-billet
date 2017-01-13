@@ -15,6 +15,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+
 @SpringComponent
 @UIScope
 public class EmployeeEditorWindow extends Window {

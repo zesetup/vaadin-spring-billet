@@ -32,18 +32,32 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
-        <!-- Vaadin -->
+        <!-- Vaadin --> 
 		<dependency>
 		    <groupId>com.vaadin</groupId>
 		    <artifactId>vaadin-spring-boot-starter</artifactId>
 		    <version>1.1.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.vaadin/viritin -->
-	<!-- 	<dependency>
+		<dependency>
 		    <groupId>org.vaadin</groupId>
 		    <artifactId>viritin</artifactId>
 		    <version>1.61</version>
-		</dependency> -->
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		    <version>1.9.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>3.5</version>
+		</dependency>
+				
+				
 	</dependencies>
 	<build>
         <plugins>
