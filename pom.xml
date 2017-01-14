@@ -3,19 +3,22 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-	
 	<groupId>com.github.zesetup</groupId>
 	<artifactId>vaadin-spring-billet</artifactId>
 	<name>vaadin-spring-billet</name>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
-	
+	<repositories>
+	    <repository>
+	      <id>vaadin</id>
+	      <name>vaadin repo</name>
+	      <url>http://vaadin.com/nexus/content/repositories/vaadin-addons/</url>
+	    </repository>
+    </repositories>	
 	<parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.4.3.RELEASE</version>
     </parent>
-	
-	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java-version>1.8</java-version>
@@ -34,8 +37,8 @@
         </dependency>
         <!-- Vaadin --> 
 		<dependency>
-		    <groupId>com.vaadin</groupId>
 		    <artifactId>vaadin-spring-boot-starter</artifactId>
+		    <groupId>com.vaadin</groupId>
 		    <version>1.1.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.vaadin/viritin -->
