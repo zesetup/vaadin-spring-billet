@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-	List<Employee> findBySurnameStartsWithIgnoreCase(String surname);
+	List<Employee> findByNameOrSurnameIgnoreCase(String name, String surname);
 	 // For lazy loading and filtering
-    List<Employee> findBySurnameStartsWithIgnoreCase(String surname, Pageable pageable);
-    long countBySurnameStartsWithIgnoreCase(String surname);
+    List<Employee> findByNameOrSurnameIgnoreCase(String name, String surname, Pageable pageable);
+    long countByNameOrSurnameIgnoreCase(String name, String surname);
 }
 

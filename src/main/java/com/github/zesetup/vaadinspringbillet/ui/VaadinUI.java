@@ -1,6 +1,8 @@
 package com.github.zesetup.vaadinspringbillet.ui;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.springframework.util.StringUtils;
 import org.vaadin.viritin.LazyList;
 import org.vaadin.viritin.fields.MTable;
 
+import com.github.zesetup.vaadinspringbillet.dao.EmployeeDao;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 import com.vaadin.annotations.Theme;
@@ -34,11 +37,16 @@ public class VaadinUI extends UI {
 	private final EmployeeEditorWindow editorWindow;
 	
 	final TextField filter;
+	final TextField filterMtable;
 	private final Button addNewBtn;
 	private static final Logger logger = LoggerFactory.getLogger(VaadinUI.class);
 	Grid grid;
 	MTable<Employee> mTable;
-	static final int PAGESIZE = 10;
+	static final Integer PAGESIZE = 10;
+	
+	@Autowired
+	EmployeeDao employeeDao;
+	
 	@Autowired
 	public VaadinUI(EmployeeRepository repo, EmployeeEditorWindow editorWindow) {
 	    this.employeeRepo = repo;
@@ -52,53 +60,60 @@ public class VaadinUI extends UI {
 	    
 	    this.editorWindow = editorWindow;
 		this.filter = new TextField();
+		this.filterMtable = new TextField();
 		this.addNewBtn = new Button("New employee", FontAwesome.PLUS);
 	}
 
 	@Override
 	protected void init(VaadinRequest request) {
+		//List<Employee> empl = employeeDao.load(null, null, null, null);
+		//logger.info("DAO return:"+empl.size());
+
 		//Mtable
 		/*final List<Person> listOfEmployees=employeeRepo.findAll();*/
 		mTable.setPageLength(10);
 		/**/
 		
 		// build layout
+		
+		
 		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
-		VerticalLayout mainLayout = new VerticalLayout(actions, grid, mTable);
-		//VerticalLayout mainLayout = new VerticalLayout(actions, grid);
-		setContent(mainLayout);
+		VerticalLayout gridLayout = new VerticalLayout(actions, grid);
+		VerticalLayout mTableLayout = new VerticalLayout(mTable);
+		HorizontalLayout twoGrids = new HorizontalLayout(gridLayout, mTableLayout);
+		setContent(twoGrids);
 		
 		// Configure layouts and components
 		actions.setSpacing(true);
-		mainLayout.setMargin(true);
-		mainLayout.setSpacing(true);
+		gridLayout.setMargin(true);
+		gridLayout.setSpacing(true);
+		mTableLayout.setMargin(true);
+		mTableLayout.setSpacing(true);
 		
 		grid.setHeight(300, Unit.PIXELS);
 		grid.setColumns("id", "name", "surname");
 		filter.setInputPrompt("Filter by surname");
 
 		// Hook logic to components
-
 		// Replace listing with filtered content when user changes filter
 		filter.addTextChangeListener(e -> listEmployees(e.getText()));
-		
+		filter.addTextChangeListener(e -> listEmployeesPaged(e.getText()));
 		// Connect selected employee to editor or hide if none is selected
 		grid.addSelectionListener(e -> {
-			logger.info("selected!");
 			if (e.getSelected().isEmpty()) {
 				//editorSubWindow.setVisible(false);
 			} else {
 				logger.info("-> edit");
 				/* Editor subwindow */
 				editorWindow.editEmployee((Employee) grid.getSelectedRow());
-				addWindow(editorWindow);
-				
+				addWindow(editorWindow);	
 			}
 		});
 
 		// Instantiate and edit new employee the new button is clicked
 		addNewBtn.addClickListener(e -> {
-			editorWindow.editEmployee(new Employee("saply", "Itan", "Saply", "Enginner"));
+			editorWindow.editEmployee(new Employee(UUID.randomUUID().toString().substring(0,8),
+					"Itan", "Saply", "Enginner"));
 			addWindow(editorWindow);
 		});
 
@@ -106,13 +121,8 @@ public class VaadinUI extends UI {
 		editorWindow.setChangeHandler(() -> {
 			editorWindow.close();
 			listEmployees(filter.getValue());
+			listEmployeesPaged(filter.getValue());
 		});
-		
-		/*editorSubWindow.addCloseListener(e ->{
-			editorSubWindow.setVisible(false);
-			logger.info("editorSubWindow closed");
-		});*/
-
 		// Initialize listing
 		listEmployees(null);
 		listEmployeesPaged("");
@@ -124,39 +134,26 @@ public class VaadinUI extends UI {
 			grid.setContainerDataSource(new BeanItemContainer(Employee.class, employeeRepo.findAll()));
 		} else {
 			grid.setContainerDataSource(
-		    		new BeanItemContainer(Employee.class, employeeRepo.findBySurnameStartsWithIgnoreCase(text)));
+		    		new BeanItemContainer(Employee.class, employeeRepo.findByNameOrSurnameIgnoreCase(text, text)));
 		}
 	}
 	// end::listEmployees[]
 	
 	private void listEmployeesPaged(String surnameFilter) {
-		/*A dead simple in memory listing would be:
-		list.setRows(repo.findAll());	
-		But we want to support filtering, first add the % marks for SQL name query*/
-        String likeFilter = "%" + surnameFilter + "%";
-        
-        //mTable.setRows(employeeRepo.findBySurnameStartsWithIgnoreCase(surnameFilter));
-
-/*		Lazy binding for better optimized connection from the Vaadin Table to
-		Spring Repository. This approach uses less memory and database
-		resources. Use this approach if you expect you'll have lots of data 
-		in your table. There are simpler APIs if you don't need sorting.
-*/		
-        logger.info("paged -> "+surnameFilter);
+        String likeFilter = "%" + surnameFilter + "%";        
+        /**/
         mTable.lazyLoadFrom(
-        (firstRow, asc, sortProperty) -> employeeRepo.findBySurnameStartsWithIgnoreCase(
-        		surnameFilter,
-                new PageRequest(
-                        firstRow / PAGESIZE,
-                        PAGESIZE
-                )
-        	),
-	        //count fetching strategy
-	        () -> (int) employeeRepo.countBySurnameStartsWithIgnoreCase(surnameFilter),
-	        PAGESIZE
-        );
-        
-        /*mTable.lazyLoadFrom(
+                (firstRow, asc, sortProperty) -> employeeDao.load(
+                		sortProperty,
+                		asc,
+                		firstRow / PAGESIZE , PAGESIZE , surnameFilter
+                	),
+        	        () -> (int) employeeDao.load(null, null, null,null,surnameFilter).size(),
+        	        PAGESIZE
+                );
+ 		/**/
+        /** /
+         mTable.lazyLoadFrom(
 		//entity fetching strategy
 		        (firstRow, asc, sortProperty) -> employeeRepo.findBySurnameStartsWithIgnoreCase(
 		        		surnameFilter,
@@ -171,7 +168,8 @@ public class VaadinUI extends UI {
 		        //count fetching strategy
 		        () -> (int) employeeRepo.countBySurnameStartsWithIgnoreCase(surnameFilter),
 		        PAGESIZE
-        );*/
+        );
+        /**/
         //adjustActionButtonState();
     }
 }
