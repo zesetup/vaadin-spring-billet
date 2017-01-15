@@ -55,7 +55,7 @@ public class Application {
 				log.info("Employee found with findByLastNameStartsWithIgnoreCase('Bauer'):");
 				log.info("--------------------------------------------");
 				for (Employee bauer : repository
-						.findByNameOrSurnameIgnoreCase("John","Connor")) {
+						.findByNameOrSurnameContainingIgnoringCase("John","Connor")) {
 					log.info(bauer.toString());
 				}
 				log.info("");

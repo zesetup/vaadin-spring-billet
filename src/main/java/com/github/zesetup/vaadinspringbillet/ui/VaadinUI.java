@@ -134,7 +134,7 @@ public class VaadinUI extends UI {
 			grid.setContainerDataSource(new BeanItemContainer(Employee.class, employeeRepo.findAll()));
 		} else {
 			grid.setContainerDataSource(
-		    		new BeanItemContainer(Employee.class, employeeRepo.findByNameOrSurnameIgnoreCase(text, text)));
+		    		new BeanItemContainer(Employee.class, employeeRepo.findByNameOrSurnameContainingIgnoringCase(text, text)));
 		}
 	}
 	// end::listEmployees[]
