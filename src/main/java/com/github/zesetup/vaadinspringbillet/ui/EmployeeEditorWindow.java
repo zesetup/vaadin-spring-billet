@@ -3,6 +3,7 @@ package com.github.zesetup.vaadinspringbillet.ui;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
+import com.github.zesetup.vaadinspringbillet.service.EmployeeService;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
@@ -35,8 +36,9 @@ public class EmployeeEditorWindow extends Window {
 		Button delete = new Button("Delete", FontAwesome.TRASH_O);
 		CssLayout actions = new CssLayout(save, cancel, delete);
 		
+
 		@Autowired
-		EmployeeRepository repository;
+		EmployeeService employeeService;
 		
 		@Autowired
 		public EmployeeEditorWindow() {
@@ -46,8 +48,8 @@ public class EmployeeEditorWindow extends Window {
 			save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 			save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 			// wire action buttons to save, delete and reset
-			save.addClickListener(e -> repository.save(employee));
-			delete.addClickListener(e -> repository.delete(employee));
+			save.addClickListener(e -> employeeService.save(employee));
+			delete.addClickListener(e -> employeeService.delete(employee));
 			cancel.addClickListener(e -> editEmployee(employee));
 			VerticalLayout verticalLayout = new VerticalLayout(name, surname, actions);
 			verticalLayout.setMargin(true);
@@ -66,7 +68,7 @@ public class EmployeeEditorWindow extends Window {
 			final boolean persisted = e.getId() != null;
 			if (persisted) {
 				// Find fresh entity for editing
-				employee = repository.findOne(e.getId());
+				employee = employeeService.findOne(e.getId());
 			}
 			else {
 				employee = e;

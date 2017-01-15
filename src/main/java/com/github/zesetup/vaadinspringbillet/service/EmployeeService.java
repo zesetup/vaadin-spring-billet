@@ -7,8 +7,14 @@ import com.github.zesetup.vaadinspringbillet.model.*;
 @Service
 public interface EmployeeService {
 	void save(Employee employee);
-	Employee get(String employeeId);
-	List<Employee>  find(String surname);
+	Employee findOne(Long employeeId);
+	List<Employee> find(String sortField,
+			Boolean isAsc,
+			Integer recordsOffset,
+			Integer recordsLimit,
+			String fullSearch);
+	List<Employee> findAll();
+	List<Employee> findByNameOrSurnameContainingIgnoringCase(String name, String surname);
 	void update(Employee employee);
-	void remove(String employeeId);
+	void delete(Employee employee);
 }

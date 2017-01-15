@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.zesetup.vaadinspringbillet.dao.EmployeeDao;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 
@@ -17,37 +18,51 @@ public class EmployeeServiceImpl implements EmployeeService{
 
 	@Autowired
 	EmployeeRepository employeeRepository;
+	@Autowired
+	EmployeeDao employeeDao;
+
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
 	@Override
 	public void save(Employee employee) {
-		// TODO Auto-generated method stub
-		
+		employeeRepository.save(employee);		
 	}
 
 	@Override
-	public Employee get(String employeeId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Employee> find(
+			String sortField,
+			Boolean isAsc,
+			Integer recordsOffset,
+			Integer recordsLimit,
+			String fullSearch
+			) {
+		return employeeDao.load(sortField, isAsc, recordsOffset, recordsLimit, fullSearch);
 	}
 
 	@Override
-	public List<Employee> find(String surname) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void update(Employee employee) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void remove(String employeeId) {
-		// TODO Auto-generated method stub
-		
+	public List<Employee> findAll(){
+		return employeeRepository.findAll();
 	}
 	
+	@Override
+	public List<Employee> findByNameOrSurnameContainingIgnoringCase(String name, String surname){
+		return employeeRepository.findByNameOrSurnameContainingIgnoringCase(name, surname);
+	}
+
+			
+	@Override
+	public void update(Employee employee) {
+		employeeRepository.save(employee);
+	}
+
+	@Override
+	public void delete(Employee employee) {
+		employeeRepository.delete(employee);
+	}
+
+	@Override
+	public Employee findOne(Long employeeId) {
+		return employeeRepository.findOne(employeeId);
+	}	
 }

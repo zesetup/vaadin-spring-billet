@@ -17,6 +17,7 @@ import org.vaadin.viritin.fields.MTable;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeDao;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
+import com.github.zesetup.vaadinspringbillet.service.EmployeeService;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
@@ -33,9 +34,8 @@ import com.vaadin.ui.Window;
 @SpringUI
 @Theme("valo")
 public class VaadinUI extends UI {
-	private final EmployeeRepository employeeRepo;
-	private final EmployeeEditorWindow editorWindow;
-	
+	private final EmployeeService employeeService;
+	private final EmployeeEditorWindow editorWindow;	
 	final TextField filter;
 	final TextField filterMtable;
 	private final Button addNewBtn;
@@ -45,19 +45,14 @@ public class VaadinUI extends UI {
 	static final Integer PAGESIZE = 10;
 	
 	@Autowired
-	EmployeeDao employeeDao;
-	
-	@Autowired
-	public VaadinUI(EmployeeRepository repo, EmployeeEditorWindow editorWindow) {
-	    this.employeeRepo = repo;
+	public VaadinUI(EmployeeService employeeService, EmployeeEditorWindow editorWindow) {
+	    //this.employeeRepo = repo;
+		this.employeeService = employeeService;
 	    this.grid = new Grid();
 	    mTable = new MTable<>(Employee.class)
 	    		.withProperties("id", "name", "surname")
 	    		.withColumnHeaders("id", "name", "surname")
-	    		.setSortableProperties("id", "name", "surname");
-	    		
-
-	    
+	    		.setSortableProperties("id", "name", "surname");	    
 	    this.editorWindow = editorWindow;
 		this.filter = new TextField();
 		this.filterMtable = new TextField();
@@ -66,17 +61,8 @@ public class VaadinUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest request) {
-		//List<Employee> empl = employeeDao.load(null, null, null, null);
-		//logger.info("DAO return:"+empl.size());
-
-		//Mtable
-		/*final List<Person> listOfEmployees=employeeRepo.findAll();*/
 		mTable.setPageLength(10);
-		/**/
-		
 		// build layout
-		
-		
 		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
 		VerticalLayout gridLayout = new VerticalLayout(actions, grid);
 		VerticalLayout mTableLayout = new VerticalLayout(mTable);
@@ -131,24 +117,25 @@ public class VaadinUI extends UI {
 	// tag::listEmployees[]
 	private void listEmployees(String text) {
 		if (StringUtils.isEmpty(text)) {
-			grid.setContainerDataSource(new BeanItemContainer(Employee.class, employeeRepo.findAll()));
+			grid.setContainerDataSource(new BeanItemContainer(Employee.class, employeeService.findAll()));
 		} else {
 			grid.setContainerDataSource(
-		    		new BeanItemContainer(Employee.class, employeeRepo.findByNameOrSurnameContainingIgnoringCase(text, text)));
+		    		new BeanItemContainer(Employee.class,
+		    				employeeService.findByNameOrSurnameContainingIgnoringCase(text, text)));
 		}
 	}
 	// end::listEmployees[]
 	
-	private void listEmployeesPaged(String surnameFilter) {
-        String likeFilter = "%" + surnameFilter + "%";        
+	private void listEmployeesPaged(String searchFilter) {
+        String likeFilter = "%" + searchFilter + "%";        
         /**/
         mTable.lazyLoadFrom(
-                (firstRow, asc, sortProperty) -> employeeDao.load(
+                (firstRow, asc, sortProperty) -> employeeService.find(
                 		sortProperty,
                 		asc,
-                		firstRow / PAGESIZE , PAGESIZE , surnameFilter
+                		firstRow / PAGESIZE , PAGESIZE , searchFilter
                 	),
-        	        () -> (int) employeeDao.load(null, null, null,null,surnameFilter).size(),
+        	        () -> (int) employeeService.find(null, null, null,null,searchFilter).size(),
         	        PAGESIZE
                 );
  		/**/
