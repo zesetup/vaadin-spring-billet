@@ -62,8 +62,7 @@ public class Application extends SpringBootServletInitializer {
       // fetch Employees by last name
       log.info("Employee found with findByLastNameStartsWithIgnoreCase('Bauer'):");
       log.info("--------------------------------------------");
-      for (Employee bauer : repository
-          .findByNameIgnoringCaseContainingOrSurnameIgnoringCaseContaining("John", "Connor")) {
+      for (Employee bauer : repository.findAll()) {
         log.info(bauer.toString());
       }
       log.info("");

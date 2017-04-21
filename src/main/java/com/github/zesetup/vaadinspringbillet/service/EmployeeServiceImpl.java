@@ -43,21 +43,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     employeeRepository.save(employee);
   }
 
-  @Override
-  public List<Employee> find(String sortField, Boolean isAsc, Integer recordsOffset,
-      Integer recordsLimit, String fullSearch) {
-    return employeeDao.load(sortField, isAsc, recordsOffset, recordsLimit, fullSearch);
-  }
-
-
-  @Override
-  public List<Employee> findViaJpaRepository(String name, String surname) {
-    List<Employee> empls = employeeRepository
-        .findByNameIgnoringCaseContainingOrSurnameIgnoringCaseContaining(name, surname);
-    logger.info(" name:" + name + " surname:" + surname + " empls size:" + empls.size());
-    return empls;
-  }
-
 
   @Override
   public void update(Employee employee) {
@@ -75,21 +60,21 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Stream<Employee> find(List<QuerySortOrder> sortOrder, int offset, int limit) {
+  public Stream<Employee> find(List<QuerySortOrder> sortOrders, int offset, int limit) {
     Pageable pageable;
-    if (sortOrder.isEmpty()) {
+    if (sortOrders.isEmpty()) {
       pageable = new PageRequest(offset / limit, limit);
     } else {
-      pageable = new PageRequest(offset / limit, limit, getSort(sortOrder));  
+      pageable = new PageRequest(offset / limit, limit, getSort(sortOrders));
     }
-    
+
     Page<Employee> result = employeeRepository.findAll(pageable);
     logger.info("Fetached: " + result.getSize() + " offset=" + offset + " limit=" + limit);
     return StreamSupport.stream(result.spliterator(), false);
   }
 
-  private Sort getSort(List<QuerySortOrder> sortOrder) {
-    return new Sort(sortOrder.stream()
+  private Sort getSort(List<QuerySortOrder> sortOrders) {
+    return new Sort(sortOrders.stream()
         .map(so -> new Order(
             so.getDirection() == SortDirection.ASCENDING ? Direction.ASC : Direction.DESC,
             so.getSorted()))
@@ -103,14 +88,19 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Stream<Employee> findWithFilter(List<QuerySortOrder> sortOrder, int offset, int limit, String filter) {
+  public Stream<Employee> findWithFilter(List<QuerySortOrder> sortOrders, int offset, int limit,
+      String filter) {
     Pageable pageable;
-    if (sortOrder.isEmpty()) {
+    if (sortOrders.isEmpty()) {
       pageable = new PageRequest(offset / limit, limit);
     } else {
-      pageable = new PageRequest(offset / limit, limit, getSort(sortOrder));      
+      pageable = new PageRequest(offset / limit, limit, getSort(sortOrders));
+      logger.info("Sort with filter: ");
+      getSort(sortOrders).forEach(v -> logger.info(v.toString()));
     }
     Page<Employee> result = employeeRepository.findWithFilter(filter, pageable);
+    logger.info("Fetached: " + result.getSize() + " offset=" + offset + " limit=" + limit);
+    result.forEach(v -> logger.info(v.getName()));
     return StreamSupport.stream(result.spliterator(), false);
   }
 

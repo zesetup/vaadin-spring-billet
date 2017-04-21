@@ -14,12 +14,6 @@ public interface EmployeeService {
 
   Employee findOne(Long employeeId);
 
-  List<Employee> find(String sortField, Boolean isAsc, Integer recordsOffset, Integer recordsLimit,
-      String fullSearch);
-
-
-  List<Employee> findViaJpaRepository(String name, String surname);
-
   void update(Employee employee);
 
   void delete(Employee employee);
