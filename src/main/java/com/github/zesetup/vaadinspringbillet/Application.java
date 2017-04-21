@@ -1,5 +1,8 @@
 package com.github.zesetup.vaadinspringbillet;
 
+import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
+import com.github.zesetup.vaadinspringbillet.model.Employee;
+
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -12,16 +15,11 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 
-import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
-import com.github.zesetup.vaadinspringbillet.model.Employee;
-
-
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
   private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-  public Application() {
-  }
+  public Application() {}
 
   @Override
   protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -39,34 +37,33 @@ public class Application extends SpringBootServletInitializer {
       repository.save(new Employee("ivanov", "Ivan", "Ivanovich", "Engeneer"));
       repository.save(new Employee("johnson", "John", "Johnson", "Project Manager"));
       repository.save(new Employee("jonauskas", "Jonas", "Jonauskas", "Officer"));
-      for(int i=0;i<150;i++) {
-        repository.save(new Employee(
-            "login"+UUID.randomUUID().toString().substring(0,5), 
-            "name"+UUID.randomUUID().toString().substring(0,5),
-            "surname"+UUID.randomUUID().toString().substring(0,5), 
-            "posit"+UUID.randomUUID().toString().substring(0,5)));
+      for (int i = 0; i < 500; i++) {
+        repository.save(new Employee("l" + UUID.randomUUID().toString().substring(0, 8),
+            "name" + UUID.randomUUID().toString().substring(0, 5),
+            "surname-" + i,
+            "posit" + UUID.randomUUID().toString().substring(0, 5)));
       }
 
       // fetch all Employees
       log.info("Employees found with findAll():");
       log.info("-------------------------------");
-      for (Employee Employee : repository.findAll()) {
-        log.info(Employee.toString());
+      for (Employee employee : repository.findAll()) {
+        log.info(employee.toString());
       }
       log.info("");
 
       // fetch an individual Employee by ID
-      Employee Employee = repository.findOne(1L);
+      Employee employee = repository.findOne(1L);
       log.info("Employee found with findOne(1L):");
       log.info("--------------------------------");
-      log.info(Employee.toString());
+      log.info(employee.toString());
       log.info("");
 
       // fetch Employees by last name
       log.info("Employee found with findByLastNameStartsWithIgnoreCase('Bauer'):");
       log.info("--------------------------------------------");
       for (Employee bauer : repository
-          .findByNameIgnoringCaseContainingOrSurnameIgnoringCaseContaining("John","Connor")) {
+          .findByNameIgnoringCaseContainingOrSurnameIgnoringCaseContaining("John", "Connor")) {
         log.info(bauer.toString());
       }
       log.info("");
