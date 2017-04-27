@@ -66,6 +66,8 @@ public class EmployeeServiceImpl implements EmployeeService {
       pageable = new PageRequest(offset / limit, limit);
     } else {
       pageable = new PageRequest(offset / limit, limit, getSort(sortOrders));
+      logger.info("Sort without filter: ");
+      getSort(sortOrders).forEach(v -> logger.info(v.toString()));
     }
 
     Page<Employee> result = employeeRepository.findAll(pageable);
@@ -92,7 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
       String filter) {
     Pageable pageable;
     if (sortOrders.isEmpty()) {
-      pageable = new PageRequest(offset / limit, limit);
+      pageable = new PageRequest(offset / limit, limit);      
     } else {
       pageable = new PageRequest(offset / limit, limit, getSort(sortOrders));
       logger.info("Sort with filter: ");
@@ -100,7 +102,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
     Page<Employee> result = employeeRepository.findWithFilter(filter, pageable);
     logger.info("Fetached: " + result.getSize() + " offset=" + offset + " limit=" + limit);
-    result.forEach(v -> logger.info(v.getName()));
+    //result.forEach(v -> logger.info(v.getName()));
     return StreamSupport.stream(result.spliterator(), false);
   }
 

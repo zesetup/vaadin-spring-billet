@@ -10,6 +10,7 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -64,15 +65,18 @@ public class vaadinUI extends UI {
         Notification.show("Please select item");
       }
     });
+    Label counterLabel = new Label();
     HorizontalLayout actions = new HorizontalLayout(filterField, addNewBtn, editBtn);
-    VerticalLayout verticalLayout = new VerticalLayout(actions, grid);
+    VerticalLayout verticalLayout = new VerticalLayout(actions, grid, counterLabel);
     setContent(verticalLayout);
     filterField.addValueChangeListener(e -> {
       grid.setDataProvider((sortOrder, offset, limit) -> employeeService.findWithFilter(sortOrder,
           offset, limit, e.getValue()), () -> employeeService.countWithFilter(e.getValue()));
+      counterLabel.setValue("Size:" + employeeService.countWithFilter(e.getValue()));
     });
     grid.setDataProvider(
         (sortOrder, offset, limit) -> employeeService.find(sortOrder, offset, limit),
         () -> employeeService.count());
+    counterLabel.setValue("Size:" + employeeService.count());
   }
 }
