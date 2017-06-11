@@ -60,7 +60,6 @@ public class EmployeeEditorWindow extends Window {
   }
 
   public interface ChangeHandler {
-
     void onChange();
   }
 

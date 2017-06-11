@@ -29,13 +29,12 @@ public class vaadinUI extends UI {
   private EmployeeService employeeService;
 
   @Autowired
-  private EmployeeEditorWindow editorWindow;
+  private EmployeeEditorWindow employeeEditor;
 
   private TextField filterField = new TextField("Filter...");
   private static final Logger logger = LoggerFactory.getLogger(vaadinUI.class);
   private Grid<Employee> grid = new Grid<Employee>();
-
-
+  
   public vaadinUI() {}
 
   @Override
@@ -53,14 +52,15 @@ public class vaadinUI extends UI {
     filterField.setPlaceholder("Filter..");
     filterField.setValueChangeMode(ValueChangeMode.LAZY);
     filterField.clear();
+    
     Button addNewBtn = new Button("New", VaadinIcons.PLUS);
     addNewBtn.addClickListener(e -> {
-
+    	addWindow(employeeEditor);
     });
     Button editBtn = new Button("Edit", VaadinIcons.EDIT);
     editBtn.addClickListener(e -> {
       if (!grid.getSelectedItems().isEmpty()) {
-
+    	  addWindow(employeeEditor);
       } else {
         Notification.show("Please select item");
       }
