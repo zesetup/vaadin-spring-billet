@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 @SpringUI
 @Theme("valo")
 public class vaadinUI extends UI {
@@ -31,10 +30,10 @@ public class vaadinUI extends UI {
   @Autowired
   private EmployeeEditorWindow employeeEditor;
 
-  private TextField filterField = new TextField("Filter...");
+  private TextField filterField = new TextField();
   private static final Logger logger = LoggerFactory.getLogger(vaadinUI.class);
   private Grid<Employee> grid = new Grid<Employee>();
-  
+
   public vaadinUI() {}
 
   @Override
@@ -52,15 +51,18 @@ public class vaadinUI extends UI {
     filterField.setPlaceholder("Filter..");
     filterField.setValueChangeMode(ValueChangeMode.LAZY);
     filterField.clear();
-    
+
     Button addNewBtn = new Button("New", VaadinIcons.PLUS);
+    addWindow(employeeEditor);
+    employeeEditor.setVisible(false);
     addNewBtn.addClickListener(e -> {
-    	addWindow(employeeEditor);
+      employeeEditor.setVisible(true);  
     });
     Button editBtn = new Button("Edit", VaadinIcons.EDIT);
     editBtn.addClickListener(e -> {
       if (!grid.getSelectedItems().isEmpty()) {
-    	  addWindow(employeeEditor);
+        employeeEditor.editEmployee(grid.asSingleSelect().getValue());
+        employeeEditor.setVisible(true);
       } else {
         Notification.show("Please select item");
       }
@@ -78,5 +80,16 @@ public class vaadinUI extends UI {
         (sortOrder, offset, limit) -> employeeService.find(sortOrder, offset, limit),
         () -> employeeService.count());
     counterLabel.setValue("Size:" + employeeService.count());
+  
+    employeeEditor.setChangeHandler(() -> {
+      employeeEditor.setVisible(false);
+      
+      grid.setDataProvider(
+          (sortOrder, offset, limit) -> employeeService.findWithFilter(sortOrder, offset, limit,
+              filterField.getValue()),
+          () -> employeeService.countWithFilter(filterField.getValue()));
+
+    });
+   
   }
 }

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 public class EmployeeEditorWindow extends Window {
 
+  private static final long serialVersionUID = 1L;
   @Autowired
   private EmployeeRepository repository;
   /**
@@ -42,13 +43,16 @@ public class EmployeeEditorWindow extends Window {
 
   @Autowired
   public EmployeeEditorWindow() {
-    // this.repository = repository;
     // Configure and style components
     actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
     save.setStyleName(ValoTheme.BUTTON_PRIMARY);
     save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
     // wire action buttons to save, delete and reset
-    save.addClickListener(e -> employeeService.save(employee));
+    save.addClickListener(e -> { 
+      employee.setName(name.getValue());
+      employee.setSurname(surname.getValue());
+      employeeService.save(employee);
+    });
     delete.addClickListener(e -> employeeService.delete(employee));
     cancel.addClickListener(e -> editEmployee(employee));
     VerticalLayout verticalLayout = new VerticalLayout(name, surname, actions);
@@ -59,15 +63,13 @@ public class EmployeeEditorWindow extends Window {
     setContent(verticalLayout);
   }
 
-  public interface ChangeHandler {
-    void onChange();
-  }
-
   public void editEmployee(Employee e) {
     final boolean persisted = e.getId() != null;
     if (persisted) {
       // Find fresh entity for editing
       employee = employeeService.findOne(e.getId());
+      name.setValue(employee.getName());
+      surname.setValue(employee.getSurname());
     } else {
       name.clear();
       surname.clear();
@@ -80,11 +82,14 @@ public class EmployeeEditorWindow extends Window {
     // Select all text in firstName field automatically
     name.selectAll();
   }
-
-  public void setChangeHandler(ChangeHandler h) {
-    // ChangeHandler is notified when either save or delete
-    // is clicked
-    save.addClickListener(e -> h.onChange());
-    delete.addClickListener(e -> h.onChange());
+  
+  public interface ChangeHandler {
+    void onChange();
   }
+ 
+  public void setChangeHandler(ChangeHandler h) {
+    save.addClickListener(e -> h.onChange());
+    delete.addClickListener(e -> h.onChange());  
+  }
+  
 }
