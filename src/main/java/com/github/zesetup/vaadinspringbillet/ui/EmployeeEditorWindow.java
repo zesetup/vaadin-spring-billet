@@ -33,9 +33,10 @@ public class EmployeeEditorWindow extends Window {
 
   /* Action buttons */
   Button save = new Button("Save", VaadinIcons.UPLOAD);
-  Button cancel = new Button("Reset");
+  Button reset = new Button("Reset");
+  Button cancel = new Button("Cancel");
   Button delete = new Button("Delete", VaadinIcons.RECYCLE);
-  CssLayout actions = new CssLayout(save, cancel, delete);
+  CssLayout actions = new CssLayout(save, reset, delete, cancel);
 
 
   @Autowired
@@ -43,6 +44,8 @@ public class EmployeeEditorWindow extends Window {
 
   @Autowired
   public EmployeeEditorWindow() {
+    setClosable(false);
+    setResizable(false);
     // Configure and style components
     actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
     save.setStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -54,7 +57,8 @@ public class EmployeeEditorWindow extends Window {
       employeeService.save(employee);
     });
     delete.addClickListener(e -> employeeService.delete(employee));
-    cancel.addClickListener(e -> editEmployee(employee));
+    reset.addClickListener(e -> editEmployee(employee));
+    cancel.addClickListener(e -> { setVisible(false); });
     VerticalLayout verticalLayout = new VerticalLayout(name, surname, actions);
     verticalLayout.setMargin(true);
     verticalLayout.setSpacing(true);
@@ -74,7 +78,7 @@ public class EmployeeEditorWindow extends Window {
       name.clear();
       surname.clear();
     }
-    cancel.setVisible(persisted);
+    reset.setVisible(persisted);
 
 
     // A hack to ensure the whole form is visible
