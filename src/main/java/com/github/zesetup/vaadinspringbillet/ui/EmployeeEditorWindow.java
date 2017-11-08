@@ -51,7 +51,7 @@ public class EmployeeEditorWindow extends Window {
     save.setStyleName(ValoTheme.BUTTON_PRIMARY);
     save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
     // wire action buttons to save, delete and reset
-    save.addClickListener(e -> { 
+    save.addClickListener(e -> {
       employee.setName(name.getValue());
       employee.setSurname(surname.getValue());
       employeeService.save(employee);
@@ -77,6 +77,7 @@ public class EmployeeEditorWindow extends Window {
     } else {
       name.clear();
       surname.clear();
+      employee = e;
     }
     reset.setVisible(persisted);
 

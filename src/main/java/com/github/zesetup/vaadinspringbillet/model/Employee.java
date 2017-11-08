@@ -29,7 +29,7 @@ public class Employee {
 	@Column(name = "surname", nullable = false, length = 32)
 	private String surname;
 
-	@Column(name = "position", nullable = false, length = 64)
+	@Column(name = "position", nullable = true, length = 64)
 	private String position; 
 
 	@Column(name = "isActive")
@@ -99,5 +99,13 @@ public class Employee {
 	@Override
 	public String  toString() {
 		return "login: "+login+"; name: " +name+"; surname: "+surname+"; notes: "+notes;
+	}
+	
+	public Boolean equals(Employee e) {
+	  if(e.getId().equals(id)) {
+	    return true;
+	  } else {
+	    return false;
+	  }
 	}
 }

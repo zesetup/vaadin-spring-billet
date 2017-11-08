@@ -33,7 +33,7 @@ public class vaadinUI extends UI {
   private TextField filterField = new TextField();
   private static final Logger logger = LoggerFactory.getLogger(vaadinUI.class);
   private Grid<Employee> grid = new Grid<Employee>();
-
+  private Employee employee;
   public vaadinUI() {}
 
   @Override
@@ -56,13 +56,17 @@ public class vaadinUI extends UI {
     addWindow(employeeEditor);
     employeeEditor.setVisible(false);
     addNewBtn.addClickListener(e -> {
-      employeeEditor.setVisible(true);  
+      employee = new Employee();
+      employeeEditor.editEmployee(employee);
+      employeeEditor.setVisible(true);
     });
     Button editBtn = new Button("Edit", VaadinIcons.EDIT);
     editBtn.addClickListener(e -> {
       if (!grid.getSelectedItems().isEmpty()) {
-        employeeEditor.editEmployee(grid.asSingleSelect().getValue());
+        employee = grid.asSingleSelect().getValue();
+        employeeEditor.editEmployee(employee);
         employeeEditor.setVisible(true);
+
       } else {
         Notification.show("Please select item");
       }
@@ -80,16 +84,12 @@ public class vaadinUI extends UI {
         (sortOrder, offset, limit) -> employeeService.find(sortOrder, offset, limit),
         () -> employeeService.count());
     counterLabel.setValue("Size:" + employeeService.count());
-  
+
     employeeEditor.setChangeHandler(() -> {
       employeeEditor.setVisible(false);
-      
-      grid.setDataProvider(
-          (sortOrder, offset, limit) -> employeeService.findWithFilter(sortOrder, offset, limit,
-              filterField.getValue()),
-          () -> employeeService.countWithFilter(filterField.getValue()));
-
+      grid.getDataProvider().refreshAll();
+      System.out.println("Selecting Employee: " + employee.getName());
+      grid.select(employee);
     });
-   
   }
 }
