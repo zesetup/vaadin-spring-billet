@@ -3,6 +3,8 @@ package com.github.zesetup.vaadinspringbillet.ui;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 import com.github.zesetup.vaadinspringbillet.service.EmployeeService;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.provider.DataChangeEvent;
+import com.vaadin.data.provider.DataProviderListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ValueChangeMode;
@@ -91,5 +93,14 @@ public class vaadinUI extends UI {
       System.out.println("Selecting Employee: " + employee.getName());
       grid.select(employee);
     });
+
+    DataProviderListener<Employee> dataProviderListener = new DataProviderListener<Employee>() {
+      @Override
+      public void onDataChange(DataChangeEvent<Employee> event) {
+        System.out.println("onDataChange!, employee: " + employee.getName());
+        event.getSource().getId(employee);
+        grid.select(employee);
+      }};
+    grid.getDataProvider().addDataProviderListener(dataProviderListener);
   }
 }
