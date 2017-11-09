@@ -3,12 +3,15 @@ package com.github.zesetup.vaadinspringbillet.ui;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 import com.github.zesetup.vaadinspringbillet.service.EmployeeService;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.provider.DataChangeEvent;
+import com.vaadin.data.provider.DataProviderListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -38,7 +41,7 @@ public class vaadinUI extends UI {
 
   @Override
   protected void init(VaadinRequest request) {
-
+    grid.setSelectionMode(SelectionMode.SINGLE);
     grid.setSizeFull();
     grid.addColumn(p -> String.valueOf(p.getName())).setCaption("Name").setSortProperty("name")
         .setWidth(200);
@@ -89,8 +92,10 @@ public class vaadinUI extends UI {
     employeeEditor.setChangeHandler(() -> {
       employeeEditor.setVisible(false);
       grid.getDataProvider().refreshAll();
-      System.out.println("Selecting Employee: " + employee.getName());
-      grid.select(employee);
+      //grid.getDataProvider().refreshItem(employee);
+      //System.out.println("Selecting Employee: " + employee.getName());      
+      //grid.select(employee);
     });
+
   }
 }
