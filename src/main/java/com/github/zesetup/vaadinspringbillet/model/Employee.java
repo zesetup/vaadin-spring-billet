@@ -99,7 +99,12 @@ public class Employee {
     return "login: " + login + "; name: " + name + "; surname: " + surname + "; notes: " + notes;
   }
 
-  public Boolean equals(Employee e) {
-    return e.getId().equals(id);
+  @Override
+  public boolean equals(Object other) {
+    if (id == null) {
+      return super.equals(other);
+    }
+
+    return this == other || other instanceof Employee && id.equals(((Employee) other).id);
   }
 }

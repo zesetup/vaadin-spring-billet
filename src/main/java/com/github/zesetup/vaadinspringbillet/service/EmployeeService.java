@@ -3,7 +3,6 @@ package com.github.zesetup.vaadinspringbillet.service;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.github.zesetup.vaadinspringbillet.model.*;
 import com.vaadin.data.provider.QuerySortOrder;
@@ -26,4 +25,6 @@ public interface EmployeeService {
       String filter);
 
   int countWithFilter(String value);
+
 }
+

@@ -6,7 +6,6 @@ import com.github.zesetup.vaadinspringbillet.model.Employee;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -111,4 +110,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     logger.info("Counted: " + employeeRepository.countWithFilter(filter));
     return (int) employeeRepository.countWithFilter(filter);
   }
+
+  @FunctionalInterface
+  public interface Function<Employee> {
+    void apply(Stream<Employee> items);
+  }
+
 }

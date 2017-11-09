@@ -87,7 +87,7 @@ public class EmployeeEditorWindow extends Window {
     // Select all text in firstName field automatically
     name.selectAll();
   }
-  
+
   public interface ChangeHandler {
     void onChange();
   }
