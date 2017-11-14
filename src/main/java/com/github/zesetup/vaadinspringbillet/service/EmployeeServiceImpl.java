@@ -95,9 +95,9 @@ public class EmployeeServiceImpl implements EmployeeService {
       String filter) {
     Pageable pageable;
     if (sortOrders.isEmpty()) {
-      pageable = new PageRequest(offset / limit, limit);      
+      pageable = new PageRequest(offset / limit, offset % limit + limit);
     } else {
-      pageable = new PageRequest(offset / limit, limit, getSort(sortOrders));
+      pageable = new PageRequest(offset / limit, offset % limit + limit, getSort(sortOrders));
       logger.info("Sort with filter: ");
       getSort(sortOrders).forEach(v -> logger.info(v.toString()));
     }
