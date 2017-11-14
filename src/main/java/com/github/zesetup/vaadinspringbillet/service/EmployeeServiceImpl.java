@@ -62,15 +62,17 @@ public class EmployeeServiceImpl implements EmployeeService {
   public Stream<Employee> find(List<QuerySortOrder> sortOrders, int offset, int limit) {
     Pageable pageable;
     if (sortOrders.isEmpty()) {
-      pageable = new PageRequest(offset / limit, limit);
+      pageable = new PageRequest(offset / limit, offset % limit + limit);
     } else {
-      pageable = new PageRequest(offset / limit, limit, getSort(sortOrders));
-      logger.info("Sort without filter: ");
+      pageable = new PageRequest(offset / limit, offset % limit + limit, getSort(sortOrders));
       getSort(sortOrders).forEach(v -> logger.info(v.toString()));
     }
 
     Page<Employee> result = employeeRepository.findAll(pageable);
-    logger.info("Fetached: " + result.getSize() + " offset=" + offset + " limit=" + limit);
+    logger.info("Fetached: " + result.getSize() + " offset=" + offset + " limit=" + limit 
+        + " pageable.getOffset(): " + pageable.getOffset()
+        + " pageable.getOffset(): " + pageable.getPageSize()
+        );
     return StreamSupport.stream(result.spliterator(), false);
   }
 

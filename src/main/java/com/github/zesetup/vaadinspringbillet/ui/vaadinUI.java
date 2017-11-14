@@ -88,6 +88,7 @@ public class vaadinUI extends UI {
     grid.setDataProvider(
         (sortOrder, offset, limit) -> employeeService.find(sortOrder, offset, limit),
         () -> employeeService.count());
+    counterLabel.setValue("Size:" + employeeService.count());
 
     employeeEditor.setChangeHandler(() -> {
       employeeEditor.setVisible(false);
