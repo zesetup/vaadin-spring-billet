@@ -42,7 +42,7 @@ public class vaadinUI extends UI {
   @Override
   protected void init(VaadinRequest request) {
     grid.setSelectionMode(SelectionMode.SINGLE);
-    grid.setSizeFull();
+    grid.setWidth(620, Unit.PIXELS);
     grid.addColumn(p -> String.valueOf(p.getName())).setCaption("Name").setSortProperty("name")
         .setWidth(200);
     grid.addColumn(p -> String.valueOf(p.getSurname())).setCaption("Surname")

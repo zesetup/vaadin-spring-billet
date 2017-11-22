@@ -5,7 +5,8 @@ import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -92,19 +93,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Stream<Employee> findWithFilter(List<QuerySortOrder> sortOrders, int offset, int limit,
-      String filter) {
-    Pageable pageable;
+      String filterText) {
+    List<Employee> result = new ArrayList<>();
     if (sortOrders.isEmpty()) {
-      pageable = new PageRequest(offset / limit, offset % limit + limit);
+      PageRequest pageable = new PageRequest(offset / limit, limit );
+      result =
+          employeeRepository.findWithFilter(filterText, pageable);
     } else {
-      pageable = new PageRequest(offset / limit, offset % limit + limit, getSort(sortOrders));
-      logger.info("Sort with filter: ");
-      getSort(sortOrders).forEach(v -> logger.info(v.toString()));
+      final int pageSize = limit;
+      int startPage = (int) Math.floor((double) offset / pageSize);
+      int endPage = (int) Math.floor((double) (offset + pageSize - 1) / pageSize);
+      if (startPage != endPage) {
+        PageRequest pageable = new PageRequest(offset / limit, limit, getSort(sortOrders));
+        List<Employee> page0 =  employeeRepository.findWithFilter(filterText, pageable);
+        page0 = page0.subList(offset % pageSize, page0.size());
+        List<Employee> page1 = employeeRepository.findWithFilter(filterText,
+            new PageRequest(endPage, pageSize, getSort(sortOrders)));
+        page1 = page1.subList(0, limit - page0.size());
+        result = new ArrayList<Employee>(page0);
+        result.addAll(page1);
+      } else {
+        result = employeeRepository.findWithFilter(filterText,
+            new PageRequest(endPage, pageSize, getSort(sortOrders)));
+      }
     }
-    Page<Employee> result = employeeRepository.findWithFilter(filter, pageable);
-    logger.info("Fetached: " + result.getSize() + " offset=" + offset + " limit=" + limit);
-    //result.forEach(v -> logger.info(v.getName()));
+    result = Collections.unmodifiableList(result);
     return StreamSupport.stream(result.spliterator(), false);
+    
+    
   }
 
   @Override
