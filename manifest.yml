@@ -1,6 +1,6 @@
 applications:
   - name: vaadin
     random-route: true
-    memory: 292M
+    memory: 512M
     path: target/vaadin-spring-billet-1.0.0-BUILD-SNAPSHOT.war
     buildpack: java_buildpack
