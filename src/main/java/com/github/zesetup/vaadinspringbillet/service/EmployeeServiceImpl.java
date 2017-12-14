@@ -24,17 +24,15 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-
-
 @Component
 @Transactional
 public class EmployeeServiceImpl implements EmployeeService {
 
   @Autowired
   EmployeeRepository employeeRepository;
+
   @Autowired
   EmployeeDao employeeDao;
-
 
   private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
@@ -119,8 +117,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
     result = Collections.unmodifiableList(result);
     return StreamSupport.stream(result.spliterator(), false);
-    
-    
   }
 
   @Override
@@ -133,5 +129,4 @@ public class EmployeeServiceImpl implements EmployeeService {
   public interface Function<Employee> {
     void apply(Stream<Employee> items);
   }
-
 }
