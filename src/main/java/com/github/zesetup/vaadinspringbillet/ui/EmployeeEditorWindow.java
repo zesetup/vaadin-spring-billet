@@ -89,12 +89,12 @@ public class EmployeeEditorWindow extends Window {
   }
 
   public interface ChangeHandler {
-    void onChange();
+    void onChange(Employee e);
   }
  
   public void setChangeHandler(ChangeHandler h) {
-    save.addClickListener(e -> h.onChange());
-    delete.addClickListener(e -> h.onChange());  
+    save.addClickListener(e -> h.onChange(employee));
+    delete.addClickListener(e -> h.onChange(employee));  
   }
   
 }

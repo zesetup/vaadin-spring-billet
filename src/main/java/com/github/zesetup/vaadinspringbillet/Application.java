@@ -37,7 +37,7 @@ public class Application extends SpringBootServletInitializer {
       repository.save(new Employee("ivanov", "Ivan", "Ivanovich", "Engeneer"));
       repository.save(new Employee("johnson", "John", "Johnson", "Project Manager"));
       repository.save(new Employee("jonauskas", "Jonas", "Jonauskas", "Officer"));
-      for (int i = 0; i < 56; i++) {
+      for (int i = 0; i < 2256; i++) {
         repository.save(new Employee("l" + UUID.randomUUID().toString().substring(0, 8),
             "name" + UUID.randomUUID().toString().substring(0, 5),
             "surname-" + i,
@@ -53,7 +53,7 @@ public class Application extends SpringBootServletInitializer {
       log.info("");
 
       // fetch an individual Employee by ID
-      Employee employee = repository.findOne(1L);
+      Employee employee = repository.findOne(1);
       log.info("Employee found with findOne(1L):");
       log.info("--------------------------------");
       log.info(employee.toString());

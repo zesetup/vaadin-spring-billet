@@ -90,9 +90,11 @@ public class vaadinUI extends UI {
         () -> employeeService.count());
     counterLabel.setValue("Size:" + employeeService.count());
 
-    employeeEditor.setChangeHandler(() -> {
+    employeeEditor.setChangeHandler((e) -> {
       employeeEditor.setVisible(false);
-      grid.getDataProvider().refreshAll();
+      //grid.getDataProvider().refreshAll();
+      grid.getDataProvider().refreshItem(e);
+      System.out.println("setChangeHandler... e:" + e.getName());
       //grid.getDataProvider().refreshItem(employee);
       //System.out.println("Selecting Employee: " + employee.getName());      
       //grid.select(employee);

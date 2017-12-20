@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
  @Query("select e from Employee e where LOWER(name) like '%' || LOWER(?1) || '%' or LOWER(surname) "
      + "like '%' || LOWER(?1) || '%'")

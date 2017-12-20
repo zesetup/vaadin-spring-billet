@@ -15,7 +15,7 @@ public class Employee {
 
   @Id
   @GeneratedValue
-  private Long id;
+  private Integer id;
 
   @Column(name = "login", unique = true, nullable = true, length = 32)
   private String login;
@@ -45,7 +45,7 @@ public class Employee {
     this.position = position;
   }
 
-  public Long getId() {
+  public Integer getId() {
     return id;
   }
 
@@ -105,5 +105,10 @@ public class Employee {
     }
 
     return this == other || other instanceof Employee && id.equals(((Employee) other).id);
+  }
+
+  @Override
+  public int hashCode(){
+    return id;
   }
 }

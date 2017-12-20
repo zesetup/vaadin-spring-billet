@@ -11,7 +11,7 @@ import com.vaadin.data.provider.QuerySortOrder;
 public interface EmployeeService {
   void save(Employee employee);
 
-  Employee findOne(Long employeeId);
+  Employee findOne(Integer integer);
 
   void update(Employee employee);
 

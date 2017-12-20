@@ -53,7 +53,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Employee findOne(Long employeeId) {
+  public Employee findOne(Integer employeeId) {
     return employeeRepository.findOne(employeeId);
   }
 
