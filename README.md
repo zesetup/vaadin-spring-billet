@@ -8,4 +8,5 @@ mvn   spring-boot:run
 
 # Live demo
 
-http://169.51.19.23:30080/vaadin-spring-billet/
+http://35.225.59.78:8081/
+
