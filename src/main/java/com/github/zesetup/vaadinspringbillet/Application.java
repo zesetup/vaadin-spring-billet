@@ -12,19 +12,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class Application extends SpringBootServletInitializer {
+public class Application {
   private static final Logger log = LoggerFactory.getLogger(Application.class);
-
   public Application() {}
 
-  @Override
-  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-    return application.sources(Application.class);
-  }
 
   public static void main(String[] args) {
     SpringApplication.run(Application.class);
@@ -53,7 +47,7 @@ public class Application extends SpringBootServletInitializer {
       log.info("");
 
       // fetch an individual Employee by ID
-      Employee employee = repository.findOne(1);
+      Employee employee = repository.getOne(1);
       log.info("Employee found with findOne(1L):");
       log.info("--------------------------------");
       log.info(employee.toString());

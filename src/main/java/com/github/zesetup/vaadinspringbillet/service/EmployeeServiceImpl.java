@@ -1,17 +1,15 @@
 package com.github.zesetup.vaadinspringbillet.service;
-
+import com.vaadin.flow.data.provider.SortDirection;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeDao;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
-import com.vaadin.data.provider.QuerySortOrder;
-import com.vaadin.shared.data.sort.SortDirection;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +52,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Employee findOne(Integer employeeId) {
-    return employeeRepository.findOne(employeeId);
+    return employeeRepository.findById(employeeId).get();
   }
 
   @Override
@@ -129,4 +127,5 @@ public class EmployeeServiceImpl implements EmployeeService {
   public interface Function<Employee> {
     void apply(Stream<Employee> items);
   }
+
 }

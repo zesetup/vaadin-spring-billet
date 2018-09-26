@@ -3,22 +3,21 @@ package com.github.zesetup.vaadinspringbillet.ui;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 import com.github.zesetup.vaadinspringbillet.service.EmployeeService;
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.icons.VaadinIcons;
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringComponent
 @UIScope
-public class EmployeeEditorWindow extends Window {
+public class EmployeeEditorWindow extends Dialog {
 
   private static final long serialVersionUID = 1L;
   @Autowired
@@ -32,11 +31,11 @@ public class EmployeeEditorWindow extends Window {
   TextField surname = new TextField("Last name");
 
   /* Action buttons */
-  Button save = new Button("Save", VaadinIcons.UPLOAD);
+  Button save = new Button("Save");
   Button reset = new Button("Reset");
   Button cancel = new Button("Cancel");
-  Button delete = new Button("Delete", VaadinIcons.RECYCLE);
-  CssLayout actions = new CssLayout(save, reset, delete, cancel);
+  Button delete = new Button("Delete", VaadinIcon.DEL.create());
+  HorizontalLayout actions = new HorizontalLayout(save, reset, delete, cancel);
 
 
   @Autowired
@@ -44,12 +43,7 @@ public class EmployeeEditorWindow extends Window {
 
   @Autowired
   public EmployeeEditorWindow() {
-    setClosable(false);
-    setResizable(false);
     // Configure and style components
-    actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-    save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-    save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
     // wire action buttons to save, delete and reset
     save.addClickListener(e -> {
       employee.setName(name.getValue());
@@ -62,9 +56,6 @@ public class EmployeeEditorWindow extends Window {
     VerticalLayout verticalLayout = new VerticalLayout(name, surname, actions);
     verticalLayout.setMargin(true);
     verticalLayout.setSpacing(true);
-    setPosition(100, 100);
-    setCaption("Employee editor");
-    setContent(verticalLayout);
   }
 
   public void editEmployee(Employee e) {
@@ -85,7 +76,7 @@ public class EmployeeEditorWindow extends Window {
     // A hack to ensure the whole form is visible
     save.focus();
     // Select all text in firstName field automatically
-    name.selectAll();
+    name.focus();
   }
 
   public interface ChangeHandler {

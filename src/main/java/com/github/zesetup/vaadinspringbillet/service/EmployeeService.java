@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 import com.github.zesetup.vaadinspringbillet.model.*;
-import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 
 @Service
 public interface EmployeeService {
