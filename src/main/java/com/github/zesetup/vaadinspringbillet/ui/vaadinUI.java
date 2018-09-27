@@ -2,6 +2,7 @@ package com.github.zesetup.vaadinspringbillet.ui;
 
 import com.github.zesetup.vaadinspringbillet.model.Employee;
 import com.github.zesetup.vaadinspringbillet.service.EmployeeService;
+import com.github.zesetup.vaadinspringbillet.service.EmployeeService.EmployeeSort;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
@@ -11,9 +12,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -77,20 +82,32 @@ public class vaadinUI extends VerticalLayout {
     VerticalLayout verticalLayout = new VerticalLayout(actions, grid, counterLabel);
     add(verticalLayout);
     filterField.addValueChangeListener(e -> {
-      grid.setDataProvider((sortOrder, offset, limit) -> employeeService.findWithFilter(sortOrder,
-          offset, limit, e.getValue()), () -> employeeService.countWithFilter(e.getValue()));
       counterLabel.setText("Size:" + employeeService.countWithFilter(e.getValue()));
     });
-    grid.setDataProvider(
-        (sortOrder, offset, limit) -> employeeService.find(sortOrder, offset, limit),
-        () -> employeeService.count());
-    Random random = new Random(0);
-    grid.setDataProvider(DataProvider.fromCallbacks(
-        query -> IntStream
-                .range(query.getOffset(),
-                        query.getOffset() + query.getLimit())
-                .mapToObj(index -> createPerson(index + 1, random)),
-        query -> 100 * 1000 * 1000));
+    
+    DataProvider<Employee, Void> dataProvider = DataProvider.fromCallbacks(
+        query -> {
+          List<EmployeeSort> sortOrders = new ArrayList<>();
+          for(SortOrder<String> queryOrder : query.getSortOrders()) {
+            EmployeeSort sort = employeeService.createSort(
+              // The name of the sorted property
+              queryOrder.getSorted(),
+              // The sort direction for this property
+              queryOrder.getDirection() == SortDirection.DESCENDING);
+            sortOrders.add(sort);
+          }
+
+          return employeeService.find(
+              sortOrders,
+              query.getOffset(),
+              query.getLimit()
+            );
+        },
+        // The number of persons is the same regardless of ordering
+        query -> employeeService.count()
+      );     
+    
+    grid.setDataProvider(dataProvider);
 
     counterLabel.setText("Size:" + employeeService.count());
 

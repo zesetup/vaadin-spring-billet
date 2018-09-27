@@ -9,6 +9,21 @@ import com.vaadin.flow.data.provider.QuerySortOrder;
 
 @Service
 public interface EmployeeService {
+
+  public class EmployeeSort {
+    String propertyName;
+    Boolean descending;
+    public EmployeeSort(String propertyName, Boolean descending) {
+      this.propertyName = propertyName;
+      this.descending = descending;
+    }
+    String getProperty() {
+      return propertyName;
+    }
+    Boolean getDescending() {
+      return descending;
+    }
+  }
   void save(Employee employee);
 
   Employee findOne(Integer integer);
@@ -17,14 +32,14 @@ public interface EmployeeService {
 
   void delete(Employee employee);
 
-  Stream<Employee> find(List<QuerySortOrder> sortOrder, int offset, int limit);
+  Stream<Employee> find(List<EmployeeSort> sortOrder, int offset, int limit);
 
   int count();
 
-  Stream<Employee> findWithFilter(List<QuerySortOrder> sortOrder, int offset, int limit,
+  Stream<Employee> findWithFilter(List<EmployeeSort> sortOrder, int offset, int limit,
       String filter);
 
   int countWithFilter(String value);
 
+  EmployeeSort createSort(String propertyName, boolean descending);
 }
-

@@ -56,7 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Stream<Employee> find(List<QuerySortOrder> sortOrders, int offset, int limit) {
+  public Stream<Employee> find(List<EmployeeSort> sortOrders, int offset, int limit) {
     Pageable pageable;
     if (sortOrders.isEmpty()) {
       pageable = new PageRequest(offset / limit, offset % limit + limit);
@@ -73,11 +73,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     return StreamSupport.stream(result.spliterator(), false);
   }
 
-  private Sort getSort(List<QuerySortOrder> sortOrders) {
+  private Sort getSort(List<EmployeeSort> sortOrders) {
     return new Sort(sortOrders.stream()
         .map(so -> new Order(
-            so.getDirection() == SortDirection.ASCENDING ? Direction.ASC : Direction.DESC,
-            so.getSorted()))
+            so.getDescending() ? Direction.ASC : Direction.DESC,
+            so.getProperty()))
         .collect(Collectors.toList()));
   }
 
@@ -88,7 +88,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Stream<Employee> findWithFilter(List<QuerySortOrder> sortOrders, int offset, int limit,
+  public Stream<Employee> findWithFilter(List<EmployeeSort> sortOrders, int offset, int limit,
       String filterText) {
     List<Employee> result = new ArrayList<>();
     if (sortOrders.isEmpty()) {
@@ -126,6 +126,11 @@ public class EmployeeServiceImpl implements EmployeeService {
   @FunctionalInterface
   public interface Function<Employee> {
     void apply(Stream<Employee> items);
+  }
+
+  @Override
+  public EmployeeSort createSort(String propertyName, boolean descending) {
+    return new EmployeeSort(propertyName, descending);
   }
 
 }
