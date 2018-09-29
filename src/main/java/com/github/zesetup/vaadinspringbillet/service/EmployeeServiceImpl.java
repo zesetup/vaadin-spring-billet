@@ -1,5 +1,4 @@
 package com.github.zesetup.vaadinspringbillet.service;
-import com.vaadin.flow.data.provider.SortDirection;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeDao;
 import com.github.zesetup.vaadinspringbillet.dao.EmployeeRepository;
 import com.github.zesetup.vaadinspringbillet.model.Employee;
@@ -55,24 +54,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     return employeeRepository.findById(employeeId).get();
   }
 
-  @Override
-  public Stream<Employee> find(List<EmployeeSort> sortOrders, int offset, int limit) {
-    Pageable pageable;
-    if (sortOrders.isEmpty()) {
-      pageable = new PageRequest(offset / limit, offset % limit + limit);
-    } else {
-      pageable = new PageRequest(offset / limit, offset % limit + limit, getSort(sortOrders));
-      getSort(sortOrders).forEach(v -> logger.info(v.toString()));
-    }
-
-    Page<Employee> result = employeeRepository.findAll(pageable);
-    logger.info("Fetached: " + result.getSize() + " offset=" + offset + " limit=" + limit 
-        + " pageable.getOffset(): " + pageable.getOffset()
-        + " pageable.getOffset(): " + pageable.getPageSize()
-        );
-    return StreamSupport.stream(result.spliterator(), false);
-  }
-
   private Sort getSort(List<EmployeeSort> sortOrders) {
     return new Sort(sortOrders.stream()
         .map(so -> new Order(
@@ -82,17 +63,11 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public int count() {
-    logger.info("Counted: " + employeeRepository.count());
-    return (int) employeeRepository.count();
-  }
-
-  @Override
   public Stream<Employee> findWithFilter(List<EmployeeSort> sortOrders, int offset, int limit,
       String filterText) {
     List<Employee> result = new ArrayList<>();
     if (sortOrders.isEmpty()) {
-      PageRequest pageable = new PageRequest(offset / limit, limit );
+      PageRequest pageable = PageRequest.of(offset / limit, limit );
       result =
           employeeRepository.findWithFilter(filterText, pageable);
     } else {
@@ -100,17 +75,17 @@ public class EmployeeServiceImpl implements EmployeeService {
       int startPage = (int) Math.floor((double) offset / pageSize);
       int endPage = (int) Math.floor((double) (offset + pageSize - 1) / pageSize);
       if (startPage != endPage) {
-        PageRequest pageable = new PageRequest(offset / limit, limit, getSort(sortOrders));
+        PageRequest pageable = PageRequest.of(offset / limit, limit, getSort(sortOrders));
         List<Employee> page0 =  employeeRepository.findWithFilter(filterText, pageable);
         page0 = page0.subList(offset % pageSize, page0.size());
         List<Employee> page1 = employeeRepository.findWithFilter(filterText,
-            new PageRequest(endPage, pageSize, getSort(sortOrders)));
+            PageRequest.of(endPage, pageSize, getSort(sortOrders)));
         page1 = page1.subList(0, limit - page0.size());
         result = new ArrayList<Employee>(page0);
         result.addAll(page1);
       } else {
         result = employeeRepository.findWithFilter(filterText,
-            new PageRequest(endPage, pageSize, getSort(sortOrders)));
+            PageRequest.of(endPage, pageSize, getSort(sortOrders)));
       }
     }
     result = Collections.unmodifiableList(result);

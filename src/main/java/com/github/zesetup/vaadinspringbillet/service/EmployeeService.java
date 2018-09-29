@@ -32,10 +32,6 @@ public interface EmployeeService {
 
   void delete(Employee employee);
 
-  Stream<Employee> find(List<EmployeeSort> sortOrder, int offset, int limit);
-
-  int count();
-
   Stream<Employee> findWithFilter(List<EmployeeSort> sortOrder, int offset, int limit,
       String filter);
 

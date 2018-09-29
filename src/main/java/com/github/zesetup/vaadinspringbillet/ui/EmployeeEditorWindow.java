@@ -20,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EmployeeEditorWindow extends Dialog {
 
   private static final long serialVersionUID = 1L;
-  @Autowired
-  private EmployeeRepository repository;
   /**
    * The currently edited employee
    */
@@ -52,10 +50,11 @@ public class EmployeeEditorWindow extends Dialog {
     });
     delete.addClickListener(e -> employeeService.delete(employee));
     reset.addClickListener(e -> editEmployee(employee));
-    cancel.addClickListener(e -> { setVisible(false); });
+    cancel.addClickListener(e -> { close(); });
     VerticalLayout verticalLayout = new VerticalLayout(name, surname, actions);
     verticalLayout.setMargin(true);
     verticalLayout.setSpacing(true);
+    add(verticalLayout);
   }
 
   public void editEmployee(Employee e) {
@@ -87,5 +86,4 @@ public class EmployeeEditorWindow extends Dialog {
     save.addClickListener(e -> h.onChange(employee));
     delete.addClickListener(e -> h.onChange(employee));  
   }
-  
 }
