@@ -28,12 +28,10 @@ public class Application  implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
-    log.info("repository: " + repository);
-
     repository.save(new Employee("ivanov", "Ivan", "Ivanovich", "Engeneer"));
     repository.save(new Employee("johnson", "John", "Johnson", "Project Manager"));
     repository.save(new Employee("jonauskas", "Jonas", "Jonauskas", "Officer"));
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 99; i++) {
       repository.save(new Employee("l" + UUID.randomUUID().toString().substring(0, 8),
           "name" + UUID.randomUUID().toString().substring(0, 5),
           "surname-" + i,
@@ -46,6 +44,5 @@ public class Application  implements ApplicationRunner {
     for (Employee employee : repository.findAll()) {
       log.info(employee.toString());
     }
-    log.info("");    
   }
 }

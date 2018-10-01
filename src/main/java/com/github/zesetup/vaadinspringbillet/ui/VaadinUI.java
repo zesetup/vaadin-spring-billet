@@ -19,7 +19,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,7 +54,6 @@ public class VaadinUI extends VerticalLayout {
               queryOrder.getDirection() == SortDirection.DESCENDING);
             sortOrders.add(sort);
           }
-          System.out.println(query.getOffset() + " - " + query.getLimit());
           return employeeService.findWithFilter(
               sortOrders,
               query.getOffset(),
@@ -67,7 +65,6 @@ public class VaadinUI extends VerticalLayout {
         query -> employeeService.countWithFilter(filterField.getValue())
       );     
 
-    
     grid.addColumn(Employee::getName).setHeader("Name")
     .setFlexGrow(0)
     .setWidth("100px")
@@ -82,9 +79,11 @@ public class VaadinUI extends VerticalLayout {
     .setResizable(false);
     grid.addColumn(Employee::getPosition).setHeader("Position")
     .setFlexGrow(0)
-    .setWidth("100px")
+    .setFlexGrow(1)
     .setResizable(false);
-    grid.setSelectionMode(SelectionMode.NONE);
+    
+    grid.setSelectionMode(SelectionMode.SINGLE);
+    
     // build layout
     filterField.setPlaceholder("Filter..");
     filterField.setValueChangeMode(ValueChangeMode.EAGER);
@@ -112,23 +111,24 @@ public class VaadinUI extends VerticalLayout {
     HorizontalLayout actions = new HorizontalLayout(filterField, addNewBtn, editBtn);
     VerticalLayout verticalLayout = new VerticalLayout(actions, grid, counterLabel);
     verticalLayout.setHeight("500px");
+    verticalLayout.setWidth("500px");
+
     filterField.addValueChangeListener(e -> {
       grid.setDataProvider(dataProvider);
       counterLabel.setText("Size:" + employeeService.countWithFilter(e.getValue()));
     });
         
     grid.setDataProvider(dataProvider);
+    counterLabel.setText("Size:" + employeeService.countWithFilter(""));
 
-    counterLabel.setText("Size:" + employeeService.countWithFilter(null));
-
-    employeeEditor.setChangeHandler((e) -> {
+    employeeEditor.setChangeHandler((e, isDelete) -> {
       employeeEditor.close();
-      //grid.getDataProvider().refreshAll();
-      grid.getDataProvider().refreshItem(e);
-      System.out.println("setChangeHandler... e:" + e.getName());
-      //grid.getDataProvider().refreshItem(employee);
-      //System.out.println("Selecting Employee: " + employee.getName());      
-      //grid.select(employee);
+      if(isDelete) {
+        grid.getDataProvider().refreshAll();
+      } else {
+        grid.getDataProvider().refreshItem(e);
+        grid.select(employee);
+      }
     });
     add(verticalLayout);
   }
