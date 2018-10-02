@@ -30,6 +30,8 @@ public class EmployeeEditorWindow extends Window {
   /* Fields to edit properties in Employee entity */
   TextField name = new TextField("First name");
   TextField surname = new TextField("Last name");
+  TextField position = new TextField("Position");
+  TextField login = new TextField("Login");
 
   /* Action buttons */
   Button save = new Button("Save", VaadinIcons.UPLOAD);
@@ -54,12 +56,14 @@ public class EmployeeEditorWindow extends Window {
     save.addClickListener(e -> {
       employee.setName(name.getValue());
       employee.setSurname(surname.getValue());
+      employee.setPosition(position.getValue());
+      employee.setLogin(login.getValue());
       employeeService.save(employee);
     });
     delete.addClickListener(e -> employeeService.delete(employee));
     reset.addClickListener(e -> editEmployee(employee));
     cancel.addClickListener(e -> { setVisible(false); });
-    VerticalLayout verticalLayout = new VerticalLayout(name, surname, actions);
+    VerticalLayout verticalLayout = new VerticalLayout(name, surname, position, login, actions);
     verticalLayout.setMargin(true);
     verticalLayout.setSpacing(true);
     setPosition(100, 100);
@@ -74,13 +78,16 @@ public class EmployeeEditorWindow extends Window {
       employee = employeeService.findOne(e.getId());
       name.setValue(employee.getName());
       surname.setValue(employee.getSurname());
+      position.setValue(employee.getPosition());
+      login.setValue(employee.getLogin());
     } else {
       name.clear();
       surname.clear();
+      position.clear();
+      login.clear();
       employee = e;
     }
     reset.setVisible(persisted);
-
 
     // A hack to ensure the whole form is visible
     save.focus();
@@ -91,10 +98,10 @@ public class EmployeeEditorWindow extends Window {
   public interface ChangeHandler {
     void onChange(Employee e);
   }
- 
+
   public void setChangeHandler(ChangeHandler h) {
     save.addClickListener(e -> h.onChange(employee));
     delete.addClickListener(e -> h.onChange(employee));  
   }
-  
+
 }

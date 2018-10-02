@@ -68,5 +68,4 @@ public class Application extends SpringBootServletInitializer {
       log.info("");
     };
   }
-
 }
