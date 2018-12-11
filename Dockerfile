@@ -1,5 +1,5 @@
 FROM java:8
-MAINTAINER Maksim Paz (paz@iae.lt)
+MAINTAINER Maksim Nikanorych (zerosetup@gmail.com)
 RUN rm /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/Vilnius  /etc/localtime
 RUN echo "Europe/Vilnius" > /etc/timezone
